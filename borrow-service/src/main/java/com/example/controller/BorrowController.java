@@ -16,17 +16,9 @@ public class BorrowController {
     @Resource
     BorrowService service;
 
-    @HystrixCommand(fallbackMethod = "onError")
     @RequestMapping("/borrow/{uid}")
     UserBorrowDetail findUserBorrows(@PathVariable("uid") int uid){
         System.out.println("正常调用");
         return service.getUserBorrowDetailByUid(uid);
-    }
-
-    //备选方案，这里直接返回空列表了
-    //注意参数和返回值要和上面的一致
-    UserBorrowDetail onError(int uid){
-        System.out.println("备用方案");
-        return new UserBorrowDetail(null, Collections.emptyList());
     }
 }
