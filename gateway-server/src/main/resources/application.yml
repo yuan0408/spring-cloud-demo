@@ -17,3 +17,10 @@ spring:
           uri: lb://borrowService
           predicates:
             - Path=/borrow/**
+
+        - id: book-service
+          uri: lb://bookService
+          predicates:
+            - Path=/book/**
+          filters:
+            - AddRequestHeader=Test, HelloWorld!
