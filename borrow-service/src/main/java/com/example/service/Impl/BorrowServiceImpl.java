@@ -6,6 +6,8 @@ import com.example.entity.User;
 import com.example.entity.UserBorrowDetail;
 import com.example.mapper.BorrowMapper;
 import com.example.service.BorrowService;
+import com.example.service.client.BookClient;
+import com.example.service.client.UserClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,15 +21,19 @@ public class BorrowServiceImpl implements BorrowService {
     @Resource
     BorrowMapper mapper;
 
+    @Resource
+    UserClient userClient;
+
+    @Resource
+    BookClient bookClient;
     @Override
     public UserBorrowDetail getUserBorrowDetailByUid(int uid) {
         List<Borrow> borrow = mapper.getBorrowsByUid(uid);
 
-        RestTemplate template = new RestTemplate();
-        User user = template.getForObject("http://localhost:8101/user/" + uid, User.class);
+        User user = userClient.getUserById(uid);
         List<Book> bookList = borrow
                 .stream()
-                .map(b-> template.getForObject("http://localhost:8301/book/"+b.getBid(),Book.class))
+                .map(b-> bookClient.getBookById(b.getBid()))
                 .collect(Collectors.toList());
         return new UserBorrowDetail(user,bookList);
     }
